@@ -1,7 +1,9 @@
 resource "aws_lb" "alb" {
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [for subnet in aws_subnet.public : subnet.id]
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = [aws_security_group.alb_sg.id]
+  subnets                    = [for subnet in aws_subnet.public : subnet.id]
+  enable_deletion_protection = false
 }
 
 resource "aws_launch_template" "nginx" {
@@ -40,7 +42,7 @@ resource "aws_lb_listener_rule" "forward" {
 
   condition {
     path_pattern {
-      values = ["/", "/*"]
+      values = ["/"]
     }
   }
 }
@@ -56,10 +58,4 @@ resource "aws_autoscaling_group" "asg" {
     id      = aws_launch_template.nginx.id
     version = "$Latest"
   }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  depends_on = [aws_lb_target_group.alb_tg]
 }
