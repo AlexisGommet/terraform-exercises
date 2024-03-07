@@ -1,19 +1,19 @@
-output "vpc_id" {
-  value = aws_vpc.vpc.id
+output "alb_dns" {
+  description = "alb dns"
+  value       = module.application.dns_name
 }
 
-output "public_subnets" {
-  value = [for subnet in aws_subnet.public : subnet.id]
+output "application_private_ips" {
+  description = "application instance private ips"
+  value       = module.application.private_ips
 }
 
-output "private_subnets" {
-  value = [for subnet in aws_subnet.private : subnet.id]
-}
-
-output "alb" {
-  value = aws_lb.alb.dns_name
+output "mongodb_private_ip" {
+  description = "mongodb private ip"
+  value       = module.storage.private_ip
 }
 
 output "web_app_wait_command" {
-  value = "until curl --max-time 5 http://${aws_lb.alb.dns_name} >/dev/null 2>&1; do echo preparing...; sleep 5; done; echo; echo -e 'Ready!!'"
+  value       = "until curl --max-time 5 http://${module.application.dns_name} >/dev/null 2>&1; do echo preparing...; sleep 5; done; echo; echo -e 'Ready!!'"
+  description = "Test command - tests readiness of the web app"
 }

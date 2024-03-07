@@ -2,7 +2,7 @@ variable "workstation_ip" {
   type = string
 }
 
-variable "instance_ami" {
+variable "key_name" {
   type = string
 }
 
